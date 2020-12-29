@@ -1,0 +1,23 @@
+language: generic
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t frostvlad/docker-fib-app-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true frostvlad/docker-fib-app-test npm test
+
+after_success:
+  - docker build -t frostvlad/docker-fib-app-client ./client
+  - docker build -t frostvlad/docker-fib-app-nginx ./nginx
+  - docker build -t frostvlad/docker-fib-app-server ./server
+  - docker build -t frostvlad/docker-fib-app-worker ./worker
+  # Log in to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take images and push to docker hub
+  - docker push frostvlad/docker-fib-app-client
+  - docker push frostvlad/docker-fib-app-nginx
+  - docker push frostvlad/docker-fib-app-server
+  - docker push frostvlad/docker-fib-app-worker

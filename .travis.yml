@@ -21,3 +21,15 @@ after_success:
   - docker push frostvlad/docker-fib-app-nginx
   - docker push frostvlad/docker-fib-app-server
   - docker push frostvlad/docker-fib-app-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: 'us-east-1'
+  app: 'docker-fib-app'
+  env: 'DockerFibApp-env'
+  bucket_name: 'elasticbeanstalk-us-east-1-203855928645'
+  bucket_path: 'docker-fib-app'
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
